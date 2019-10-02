@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RegExp Intro</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(./icons.css);
+      @font-face {
+        font-family: "DejaVu";
+        src: url("/usr/share/fonts/TTF/DejaVuSerif.ttf")
+      }
+      @font-face {
+        font-family: "ProximaNova";
+        src: url("/home/samflores/.local/share/fonts/FontsFree-Net-Proxima-Nova-Bold.otf");
+      }
+      @font-face {
+        font-family: "CourierPrime";
+        src: url("/home/samflores/.local/share/fonts/Courier Prime Code.ttf");
+      }
+
+      a { color: #205ac4; }
+      a:hover { color: #205ac4; }
+      a:visited { color: #205ac4; }
+
+      body { font-family: 'DejaVu'; }
+      h1, h2, h3 {
+        font-family: 'ProximaNova';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code {
+        font-family: CourierPrime;
+        font-size: 30px;
+      }
+      .re {
+        font-family: CourierPrime;
+        color: #757575;
+      }
+      .re-input {
+        text-align: center;
+        display: block;
+        width: 100%;
+        font-family: CourierPrime;
+        font-size: 3em;
+        outline: none;
+        border-radius: 0;
+        border: none;
+        border-bottom: 3px solid #757575;
+      }
+      .hi {
+        color: #000;
+      }
+
+      ul {
+        padding: 0;
+        margin: 3em 0 0 0;
+      }
+      li {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 2.0em;
+      }
+
+      .target {
+        display: block;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+      }
+      .target::before {
+        display: inline-block;
+        font-variant: small-caps;
+        color: #757575;
+        width: 7em;
+        text-align: left
+      }
+      .target::after {
+        display: inline-block;
+        content: '';
+        width: 1em;
+        font-family: icomoon;
+      }
+      .success::after { content: "\f05d"; color: #5ac420  }
+      .failure::after { content: "\f05c"; color: #c43820 }
+      .yes.target::before { content: 'válida' }
+      .no.target::before { content: 'inválida' }
+      .success .match { color: #5ac420 }
+      .failure .match { color: #5ac420 }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle
+
+# Introdução às Expressões Regulares
+
+.footnote[Samuel Flores<br>@samflores]
+
+---
+
+## O que são?
+
+- Expressão Regular
+- Regular Expression
+- RegExp
+- Regex
+
+---
+
+## O que são?
+
+- Uma sequência de caracteres que define um _pattern_ de busca
+
+---
+
+## O que são?
+
+- São extremamente úteis para encontrar, extrair ou validar informação dentro de um texto
+
+---
+
+## O que são?
+
+- Presentes em praticamente todos os editores de texto e linguagens de programação
+
+---
+
+## O que são?
+
+- Essenciais no desenvolvimento de _parsers_ ou compiladores
+
+---
+
+## Validando Datas
+
+<input class="re-input" type="text" >
+
+- .target.yes[21/07/74]
+- .target.yes[12/02/21]
+- .target.no[29-04-84]
+- .target.no[28/o3/09]
+
+---
+
+## Validando E-mails
+
+<input class="re-input" type="text" >
+
+- .target.yes[ned@stark.got]
+- .target.yes[robb@stark.got]
+- .target.no[who@stark-got]
+- .target.no[jon@snow.got]
+
+---
+
+## Intervalo de Caracteres
+
+- .re.hi[[+-*/]]
+- .re.hi[[AEIOUaeiou]]
+- .re.hi[[a-z]]
+- .re.hi[[0-57-9]]
+
+---
+
+## Intervalo de Caracteres
+
+<input class="re-input" type="text" >
+
+- .target.yes[got]
+- .target.yes[dbz]
+- .target.yes[fma]
+- .target.no[123]
+
+---
+
+## Intervalo de Caracteres
+
+<input class="re-input" type="text" >
+
+- .target.yes[0x5a6]
+- .target.yes[0xc3f]
+- .target.no[0x1g9]
+
+---
+
+## Intervalo de Caracteres - Negação
+
+- .re.hi[[^AEIOUaeiou]]
+- .re.hi[[^cafe]]
+- .re.hi[[^a-z]]
+- .re.hi[[^0-57-9]]
+
+---
+
+## Intervalo de Caracteres - Negação
+
+<input class="re-input" type="text" >
+
+- .target.yes[ght]
+- .target.yes[klb]
+- .target.no[abe]
+- .target.no[aei]
+
+---
+
+## Atalhos para Intervalos
+
+- .re.hi[\w] &rarr; .re.hi[[a-zA-Z0-9_]] &rarr; alfanuméricos
+- .re.hi[\w] &rarr; .re.hi[[^a-zA-Z0-9_]] &rarr; não-alfanuméricos
+- .re.hi[\d] &rarr; .re.hi[[0-9]] &rarr; numéricos
+- .re.hi[\D] &rarr; .re.hi[[^0-9]] &rarr; não-numéricos
+- .re.hi[\s] &rarr; .re.hi[[ \t\r\n]] &rarr; espaços
+- .re.hi[\S] &rarr; .re.hi[[^ \t\r\n]] &rarr; não-espaços
+- .re.hi[.] &rarr; qualquer caractere
+
+---
+
+## Atalhos para Intervalos
+
+<input class="re-input" type="text" >
+
+- .target.yes[abc]
+- .target.yes[def]
+- .target.no[123456]
+
+---
+
+## Repetições
+
+- .re[\w.hi[{n}]] &rarr; *n* vezes
+- .re[\w.hi[{a,b}]] &rarr; entre *a* e *b* vezes
+- .re[\w.hi[{n,}]] &rarr; *n* ou mais vezes
+- .re[\d.hi[?]] &rarr; .re[\d.hi[{0,1}]] &rarr; 0 ou 1 vez
+- .re[\d.hi[+]] &rarr; .re[\d.hi[{1,}]] &rarr; 1 ou mais vezes
+- .re[\d.hi[*]] &rarr; .re[\d.hi[{0,}]] &rarr; 0 ou mais vezes
+
+---
+
+## Repetições
+
+<input class="re-input" type="text" >
+
+- .target.yes[abc]
+- .target.yes[def]
+- .target.no[123456]
+
+---
+
+## Repetições
+
+<input class="re-input" type="text" >
+
+- .target.yes[28/09/2019]
+- .target.yes[29/09/19]
+- .target.no[1o/09/17]
+
+---
+
+## Grupos
+
+- .re[.hi[(abc)]def]
+- .re[.hi[(abc)].hi[(\.+)]]
+
+---
+
+## Grupos
+
+```js
+var regex = /(\d+)-(\d+)-(\d+)/,
+  groups = "28-09-2019".match(regex),
+  day = groups[1], // => 28
+  month = groups[2], // => 09
+  year = groups[3]; // => 2019
+```
+```js
+var regex = /(.+)@([^.]+)\.([^.]+)/,
+  groups = "jon@snow.got".match(regex),
+  user = groups[1], // => jon
+  family = groups[2], // => snow
+  tld = groups[3]; // => got
+```
+
+---
+
+## Alternativas
+
+- .re.hi[(foo|bar)]
+- .re[\d+/.hi[(01|12)]/\d{4}]
+
+---
+
+## Alternativas
+
+<input class="re-input" type="text" >
+
+- .target.yes[jon@snow.got]
+- .target.yes[bram@stark.got]
+- .target.no[cat@tully.got]
+
+---
+
+## Começo e Fim
+
+- .re[.hi[^]\d+/\d+]
+- .re[.a[@stark\.com].hi[$]]
+- .re[.hi[^]\w+.hi[$]]
+
+---
+
+## Começo e Fim
+
+<input class="re-input" type="text" >
+
+- .target.yes[jon@snow.got]
+- .target.yes[bram@stark.got]
+- .target.no[arya@stark.got99]
+- .target.no[-sansa@stark.got]
+
+---
+
+## Onde ir daqui?
+
+- https://regexone.com/
+- https://rexegg.com/
+- https://regex101.com/
+- https://rubular.com/
+
+---
+class: center, middle
+
+# Obrigado!
+    </textarea>
+
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+<script>
+  var slideshow = remark.create({ 
+    slideNumberFormat: '',
+    ratio: '16:9'
+  });
+  slideshow.pause();
+  $(function() {
+    $(document).on('keydown', function(ev) {
+      switch(ev.keyCode) {
+        case 38:
+          slideshow.gotoPreviousSlide();
+          break;
+        case 40:
+          slideshow.gotoNextSlide();
+          break;
+      }
+    });
+    $('.re-input').on('input', function(ev) {
+      ev.stopPropagation();
+      var input = $(ev.currentTarget),
+        reStr = input.val();
+
+      if (reStr == undefined || reStr == null || reStr == '') {
+        $('.target').each(function() {
+          var item = $(this);
+          item.text(item.text());
+          item.removeClass('success failure');
+        });
+        return;
+      }
+
+      try {
+        var re = new RegExp(reStr),
+          slide = input.parents('.remark-visible');
+
+        slide.find('.target').each(function() {
+          var item = $(this),
+            txt = item.text();
+
+          match = txt.match(re)
+          var klass = '',
+            newTxt = '';
+          if (match && match[0]) {
+            klass = item.hasClass('yes') ? 'success' : 'failure';
+            newTxt = '<span>' +
+              txt.replace(match[0], '<span class="match">' + match[0] + '</span>') +
+              '</span>';
+          } else {
+            klass = item.hasClass('no') ? 'success' : 'failure';
+            newTxt = txt;
+          }
+          item.removeClass('success failure');
+          item.addClass(klass);
+          item.html(newTxt);
+        });
+      } catch(err) {
+        $('.target').removeClass('success failure');
+      }
+    });
+  });
+</script>
+  </body>
+</html>
